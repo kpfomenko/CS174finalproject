@@ -1,7 +1,7 @@
 CC = gcc
-#CFLAGS = -I
+CFLAGS = -Wall -I../libpaillier-0.8/
 # Deps are the .h files
-#DEPS =
+DEPS =
 OBJ = main.o
 
 # Each .o file depends on the corresponding .c file and all the DEPS
