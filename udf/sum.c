@@ -18,11 +18,12 @@ my_bool mySum_init(UDF_INIT *initid, UDF_ARGS *args, char *message){
 	return 0;
 }
 
-void mySum_deinit(UDF_INIT *initid __attribute__((unused))){
+void mySum_deinit(UDF_INIT *initid){
 	free(initid->ptr);
 }
 
-longlong mySum(UDF_INIT* initid, UDF_ARGS* args __attribute__((unused)), char* is_null __attribute__((unused)), char* error __attribute__((unused))){
+longlong mySum(UDF_INIT* initid, UDF_ARGS* args __attribute__((unused)), char* is_null __attribute__((unused)),
+               char* error __attribute__((unused))){
     return  *((longlong *) initid->ptr);
 }
 
