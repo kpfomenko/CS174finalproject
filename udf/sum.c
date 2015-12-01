@@ -5,16 +5,19 @@
 #include <string.h>
 
 my_bool mySum_init(UDF_INIT *initid, UDF_ARGS *args, char *message){
-	if(!(args->arg_count == 1)) {
-		strcpy(message, "Expected one argument --> for calculating sum ");
-		return 1;
-	}
-	args->arg_type[0] = REAL_RESULT;
 	longlong* sum = (longlong *)malloc(sizeof(longlong));
 	*sum = 0;
 
 	initid->ptr = (char *)sum;
 
+	if(!(args->arg_count == 1)) {
+		strcpy(message, "Expected one argument --> for calculating sum ");
+		return 1;
+	}
+	if(	args->arg_type[0] != INT_RESULT){
+		strcpy(message, "mySum requires an integer");
+		return 1;
+	}
 	return 0;
 }
 

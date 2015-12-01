@@ -6,6 +6,13 @@ USE project;
 CREATE TABLE Employees (
 	id INTEGER,
 	age INTEGER,
-	salary TEXT NOT NULL,
+	salary INTEGER NOT NULL,
 	PRIMARY KEY(id)
 );
+
+-- CREATE TABLE Employees (
+-- 	id INTEGER,
+-- 	age INTEGER,
+-- 	salary TEXT NOT NULL,
+-- 	PRIMARY KEY(id)
+-- );
