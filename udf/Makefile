@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -I../libpaillier-0.8/ -I/usr/local/mysql/include/
+CFLAGS = -Wall -I../libpaillier-0.8/ -I/usr/local/mysql/include/ -I/usr/include/mysql
 LIBFLAGS = -L./ -lsum
 # Deps are the .h files
 DEPS = sum.h
