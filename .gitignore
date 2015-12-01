@@ -3,3 +3,4 @@ key/
 CMakeLists.txt
 .DS_Store
 *.o
+*.so
