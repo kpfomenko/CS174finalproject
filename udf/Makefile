@@ -13,8 +13,8 @@ OBJ = main.o
 udf: main.o libsum.so
 	$(CC) -o udf main.o $(LIBFLAGS)
 
-libsum.so: sum.o
-	$(CC) -shared -o libsum.so sum.o
+libsum.so: sum.c
+	$(CC) -shared -fPIC $(CFLAGS) -o libsum.so sum.c  
 
 clean:
 	rm -f *.o udf
