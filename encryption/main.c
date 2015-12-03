@@ -11,7 +11,25 @@ int main(int argc, char* argv[]) {
 
     paillier_keygen(128, &publicKey, &privateKey, &paillier_get_rand_devurandom);
 
+    paillier_ciphertext_t* ciphertext = paillier_create_enc_zero();
+    paillier_plaintext_t* plainText = paillier_plaintext_from_str("Avocado");
+
+    paillier_enc(ciphertext, publicKey, plainText, &paillier_get_rand_devurandom);
+
     printf("public key %s\n", paillier_pubkey_to_hex(publicKey));
     printf("private key %s\n", paillier_prvkey_to_hex(privateKey));
+    printf("plainText: %s\n", paillier_plaintext_to_str(plainText));
+
+    paillier_plaintext_t*decryptedText = NULL;
+    decryptedText = paillier_dec(decryptedText, publicKey, privateKey, ciphertext);
+    printf("decrypted text: %s\n", paillier_plaintext_to_str(decryptedText));
+
+
+    paillier_freepubkey(publicKey);
+    paillier_freeprvkey(privateKey);
+    paillier_freeciphertext(ciphertext);
+    paillier_freeplaintext(plainText);
+    paillier_freeplaintext(decryptedText);
+
     return 0;
 }
