@@ -4,3 +4,5 @@ CMakeLists.txt
 .DS_Store
 *.o
 *.so
+libpaillier-0.8/config.log
+libpaillier-0.8/config.status
