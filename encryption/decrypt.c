@@ -4,8 +4,7 @@
 #include "gmp.h"
 #include "../libpaillier-0.8/paillier.h"
 
-static const int KEY_LENGTH = 128;
-static const int ENCRYPTION_BYTE_LENGTH = 128; 
+static const int ENCRYPTION_BYTE_LENGTH = 128;
 static char *const PRIVATE_KEY_BYTES = "54085728d6701953899d4a01bd31d69e";
 static char* PUBLIC_KEY_BYTES = "a810ae51ace032a8b8743a9ef0baa51d";
 

@@ -3,6 +3,7 @@
 #include "../libpaillier-0.8/paillier.h"
 
 my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+    printf("initializing\n");
     char* sum = (char*) malloc(sizeof(char) * ENCRYPTION_BYTE_LENGTH);
     initid->ptr = sum;
 
