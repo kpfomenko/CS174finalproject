@@ -3,7 +3,7 @@
 #include "../libpaillier-0.8/paillier.h"
 
 my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
-    char* sum = (char*) malloc(sizeof(char) * ENCRYPTION_BYTE_LENGTH);
+    char* sum = (char*) malloc(sizeof(char) * (2*ENCRYPTION_BYTE_LENGTH + 1));
     initid->ptr = sum;
 
     if(!(args->arg_count == 1)) {
@@ -76,7 +76,7 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
 }
 
 unsigned char *convertHexToBytes(char *hex) {
-    unsigned char* encryptedBytes = (unsigned char*) malloc(sizeof(unsigned char) * ENCRYPTION_BYTE_LENGTH);
+    unsigned char* encryptedBytes = (unsigned char*) malloc(sizeof(unsigned char) * (2*ENCRYPTION_BYTE_LENGTH + 1));
 
     // Parsing through hex to build byte array
     char* hexPortion = strtok(hex, ":");
