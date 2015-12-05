@@ -61,9 +61,9 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     char* resultHex = convertBytesToHex(resultBytes);
 
 //    free(initid->ptr);
-//    initid->ptr = resultHex;
+    initid->ptr = (char*) resultHex;
 //    memcpy(initid->ptr, resultHex, ENCRYPTION_BYTE_LENGTH);
-    memcpy(initid->ptr, "hello\0", 7);
+//    memcpy(initid->ptr, "hello\0", 7);
 //    initid->ptr = "hello";
 
 //    free(encryptedBytes1);
