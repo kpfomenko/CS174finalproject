@@ -4,8 +4,9 @@
 #include "../libpaillier-0.8/paillier.h"
 
 my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
-    char* sum = (char*) malloc(sizeof(char) * (2*ENCRYPTION_BYTE_LENGTH + 1));
-    initid->ptr = sum;
+    // char* sum = (char*) malloc(sizeof(char) * (2*ENCRYPTION_BYTE_LENGTH + 1));
+    paillier_ciphertext_t* sum  = paillier_create_enc_zero();
+    *((paillier_ciphertext_t *) initid->ptr) = *sum;
 
     if(!(args->arg_count == 1)) {
         strcpy(message, "Expected one argument for calculating sum ");
@@ -20,18 +21,31 @@ my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 }
 
 void sum_he_deinit(UDF_INIT *initid) {
-    free(initid->ptr);
+    // free(initid->ptr);
+    paillier_freeciphertext((paillier_ciphertext_t *) initid->ptr);
 }
 
 char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error) {
 //    memcpy(result, initid->ptr, ENCRYPTION_BYTE_LENGTH);
 //    *length = ENCRYPTION_BYTE_LENGTH;
 //    return result;
-    return "hi";
+    // return "hi";
+    //conversion to string
+    paillier_ciphertext_t* ciphertext = (paillier_ciphertext_t *) initid->ptr ;
+
+    int sizeOfResult = mpz_sizeinbase(ciphertext,16) + 2;
+    char* encrypted = (char*)malloc(sizeof(char)*sizeOfResult);
+    mpz_get_str(encrypted, 16, ciphertext);
+    memcpy(result, encrypted, sizeOfResult);
+    *length = sizeOfResult; 
+    return result;
+
+
 }
 
 void sum_he_clear(UDF_INIT *initid, char *is_null, char *error) {
-    initid->ptr = NULL;
+    paillier_freeciphertext((paillier_ciphertext_t *) initid->ptr);
+    *((paillier_ciphertext_t *) initid->ptr) = * paillier_create_enc_zero();
 }
 
 void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
@@ -45,24 +59,32 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
         return;
     }
 
-    char* encryptedHex1 = initid->ptr;
-    char* encryptedHex2 = args->args[0];
+    // char* encryptedHex1 = initid->ptr;
+    // char* encryptedHex2 = args->args[0];
 
-    unsigned char* encryptedBytes1 = convertHexToBytes(encryptedHex1);
-    unsigned char* encryptedBytes2 = convertHexToBytes(encryptedHex2);
+    // unsigned char* encryptedBytes1 = convertHexToBytes(encryptedHex1);
+    // unsigned char* encryptedBytes2 = convertHexToBytes(encryptedHex2);
 
-    paillier_ciphertext_t* ciphertext1 = paillier_ciphertext_from_bytes(encryptedBytes1, ENCRYPTION_BYTE_LENGTH);
-    paillier_ciphertext_t* ciphertext2 = paillier_ciphertext_from_bytes(encryptedBytes2, ENCRYPTION_BYTE_LENGTH);
+    // paillier_ciphertext_t* ciphertext1 = paillier_ciphertext_from_bytes(encryptedBytes1, ENCRYPTION_BYTE_LENGTH);
+    // paillier_ciphertext_t* ciphertext2 = paillier_ciphertext_from_bytes(encryptedBytes2, ENCRYPTION_BYTE_LENGTH);
+
+    paillier_ciphertext_t* ciphertext1 = (paillier_ciphertext_t *) initid->ptr ;
+    paillier_ciphertext_t* ciphertext2 = paillier_create_enc_zero() ;
+    mpz_init_set_str(ciphertext2, args->args[0], 16);
+
+
 
     paillier_ciphertext_t* result = paillier_create_enc_zero();
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_HEX);
     paillier_mul(publicKey, result, ciphertext1, ciphertext2);
 
-    unsigned char* resultBytes = paillier_ciphertext_to_bytes(ENCRYPTION_BYTE_LENGTH, result);
-    char* resultHex = convertBytesToHex(resultBytes);
+    // unsigned char* resultBytes = paillier_ciphertext_to_bytes(ENCRYPTION_BYTE_LENGTH, result);
+    // char* resultHex = convertBytesToHex(resultBytes);
 
 //    free(initid->ptr);
-    initid->ptr = (char*) resultHex;
+    paillier_freeciphertext(ciphertext1);
+    // paillier_freeciphertext(ciphertext2);
+    *((paillier_ciphertext_t *) initid->ptr) = *result;
 //    memcpy(initid->ptr, resultHex, ENCRYPTION_BYTE_LENGTH);
 //    memcpy(initid->ptr, "hello\0", 7);
 //    initid->ptr = "hello";
@@ -70,10 +92,10 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
 //    free(encryptedBytes1);
 //    free(encryptedBytes2);
 //    free(resultBytes);
-//    paillier_freeciphertext(ciphertext1);
-//    paillier_freeciphertext(ciphertext2);
+    // paillier_freeciphertext(ciphertext1);
+    paillier_freeciphertext(ciphertext2);
 //    paillier_freeciphertext(result);
-//    paillier_freepubkey(publicKey);
+    paillier_freepubkey(publicKey);
 }
 
 unsigned char *convertHexToBytes(char *hex) {
