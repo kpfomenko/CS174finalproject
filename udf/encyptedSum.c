@@ -1,3 +1,4 @@
+#include <string.h>
 #include "encyptedSum.h"
 #include "gmp.h"
 #include "../libpaillier-0.8/paillier.h"
