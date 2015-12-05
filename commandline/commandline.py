@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 import mysql.connector
+import subprocess
 
 config = {
 	'user': 'root',
@@ -30,7 +31,18 @@ def execute(query, values):
 
 # Functions:
 def createSelectQuery(tokenList):
-	print(tokenList)
+	# SELECT salary FROM Employees
+	sql_query = "SELECT salary FROM Employees WHERE id = 112"
+	sql_values = {}
+	execute(sql_query, sql_values)	
+
+	for salary in cursor:
+		# print(type(salary[0]))
+		decryptProgram = subprocess.Popen(['../encryption/decrypt', salary[0]], stdout=subprocess.PIPE)
+		decryptSalary = decryptProgram.stdout.read()
+		print(decryptSalary)
+
+	# print(tokenList)
 
 def createInsertQuery(tokenList):
 	# guaranteed format: employeeId, employeeAge, employeeSalary
@@ -38,8 +50,12 @@ def createInsertQuery(tokenList):
 	emp_age = tokenList[1]
 	emp_salary = tokenList[2]
 
+	# Calling C file
+	encryptProgram = subprocess.Popen(['../encryption/encrypt', emp_salary], stdout=subprocess.PIPE)
+	encryptedSalary = encryptProgram.stdout.read()
+
 	sql_query = "INSERT INTO Employees (id, age, salary) VALUES(%(emp_id)s, %(emp_age)s, %(emp_salary)s)"
-	sql_values = {'emp_id': emp_id, 'emp_age': emp_age, 'emp_salary': emp_salary}	
+	sql_values = {'emp_id': emp_id, 'emp_age': emp_age, 'emp_salary': encryptedSalary}	
 	execute(sql_query, sql_values)
 	
 if __name__ == '__main__':
