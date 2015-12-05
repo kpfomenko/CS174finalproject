@@ -6,35 +6,33 @@
 static const int ENCRYPTION_BYTE_LENGTH = 128;
 static char* PUBLIC_KEY_BYTES = "a810ae51ace032a8b8743a9ef0baa51d";
 
-void * encrypt(char *);
+char * encrypt(char *);
 
 int main(int argc, char* argv[]) {
     if(argc != 2){
         printf("Error: No string to encode\n");
     }
-    //void * encryption ==> array of bytes
-    unsigned char* encryption = (unsigned char *) encrypt(argv[1]);
-    //convert to hexidecimal
-    int i;
-    for (i = 0; i < ENCRYPTION_BYTE_LENGTH; i++){
-        if (i > 0) printf(":");
-        printf("%02X", encryption[i]);
-    }
-    printf("\n");
+    char* encryption = encrypt(argv[1]);
+    // convert encrypted void * to string
+    printf("%s\n", encryption);
+
     return 0;
 }
 
-void * encrypt(char *plaintextString) {
+char * encrypt(char *plaintextString) {
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
     paillier_plaintext_t* plainText = paillier_plaintext_from_str(plaintextString);
     paillier_ciphertext_t* ciphertext = NULL;
 
     ciphertext = paillier_enc(ciphertext, publicKey, plainText, &paillier_get_rand_devurandom);
-    void* ciphertextString = paillier_ciphertext_to_bytes(ENCRYPTION_BYTE_LENGTH, ciphertext);
+    
+    int sizeOfResult = mpz_sizeinbase(ciphertext,16);
+    char* encrypted = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
+    mpz_get_str(encrypted, 16, ciphertext);
 
     paillier_freeplaintext(plainText);
     paillier_freeciphertext(ciphertext);
     paillier_freepubkey(publicKey);
 
-    return ciphertextString;
+    return encrypted;
 }
