@@ -3,7 +3,6 @@
 #include "../libpaillier-0.8/paillier.h"
 
 my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
-    printf("initializing\n");
     char* sum = (char*) malloc(sizeof(char) * ENCRYPTION_BYTE_LENGTH);
     initid->ptr = sum;
 
@@ -23,8 +22,11 @@ void sum_he_deinit(UDF_INIT *initid) {
     free(initid->ptr);
 }
 
-char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
-    return initid->ptr;
+char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error) {
+//    memcpy(result, initid->ptr, ENCRYPTION_BYTE_LENGTH);
+//    *length = ENCRYPTION_BYTE_LENGTH;
+//    return result;
+    return "hi";
 }
 
 void sum_he_clear(UDF_INIT *initid, char *is_null, char *error) {
@@ -32,6 +34,16 @@ void sum_he_clear(UDF_INIT *initid, char *is_null, char *error) {
 }
 
 void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+
+    if(!(args->arg_count == 1)) {
+        strcpy(error, "Expected one argument for calculating sum ");
+        return;
+    }
+    if(	args->arg_type[0] != STRING_RESULT){
+        strcpy(error, "sum_he requires an string containing the hexidecimal encrypted value");
+        return;
+    }
+
     char* encryptedHex1 = initid->ptr;
     char* encryptedHex2 = args->args[0];
 
@@ -48,16 +60,19 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     unsigned char* resultBytes = paillier_ciphertext_to_bytes(ENCRYPTION_BYTE_LENGTH, result);
     char* resultHex = convertBytesToHex(resultBytes);
 
-    free(initid->ptr);
-    initid->ptr = resultHex;
+//    free(initid->ptr);
+//    initid->ptr = resultHex;
+//    memcpy(initid->ptr, resultHex, ENCRYPTION_BYTE_LENGTH);
+    memcpy(initid->ptr, "hello\0", 7);
+//    initid->ptr = "hello";
 
-    free(encryptedBytes1);
-    free(encryptedBytes2);
-    free(resultBytes);
-    paillier_freeciphertext(ciphertext1);
-    paillier_freeciphertext(ciphertext2);
-    paillier_freeciphertext(result);
-    paillier_freepubkey(publicKey);
+//    free(encryptedBytes1);
+//    free(encryptedBytes2);
+//    free(resultBytes);
+//    paillier_freeciphertext(ciphertext1);
+//    paillier_freeciphertext(ciphertext2);
+//    paillier_freeciphertext(result);
+//    paillier_freepubkey(publicKey);
 }
 
 unsigned char *convertHexToBytes(char *hex) {
