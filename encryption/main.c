@@ -6,7 +6,7 @@
 static const int KEY_LENGTH = 128;
 static const int ENCRYPTION_BYTE_LENGTH = 65536; // 2^16
 static char *const PRIVATE_KEY_BYTES = "54085728d6701953899d4a01bd31d69e";
-static char* PUBLIC_KEY_BYTES = "a810ae51ace032a8b8743a9ef0baa51d";
+static char*PUBLIC_KEY_HEX = "a810ae51ace032a8b8743a9ef0baa51d";
 
 void createKeys();
 void * encrypt(char *);
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
 
 void * encrypt(char *plaintextString) {
-    paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
+    paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_HEX);
     paillier_plaintext_t* plainText = paillier_plaintext_from_str(plaintextString);
     paillier_ciphertext_t* ciphertext = NULL;
 
@@ -44,7 +44,7 @@ void * encrypt(char *plaintextString) {
 
 char* decrypt(void* cipherTextBytes) {
     paillier_ciphertext_t* ciphertext = paillier_ciphertext_from_bytes(cipherTextBytes, ENCRYPTION_BYTE_LENGTH);
-    paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
+    paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_HEX);
     paillier_prvkey_t* privateKey = paillier_prvkey_from_hex(PRIVATE_KEY_BYTES, publicKey);
 
     paillier_plaintext_t* decryptedText = NULL;

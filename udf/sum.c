@@ -1,6 +1,4 @@
-//
-// Created by Deanna Hartsook on 11/29/15.
-//
+
 #include "sum.h"
 #include <string.h>
 
