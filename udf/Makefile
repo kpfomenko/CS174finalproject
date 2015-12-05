@@ -7,3 +7,5 @@ libsum.so: encyptedSum.c
 
 clean:
 	rm -f *.o libsum.so
+
+# compile for linux: gcc $(mysql_config --cflags) -shared -fPIC -o libsum.so encyptedSum.c paillier.c -lgmp
