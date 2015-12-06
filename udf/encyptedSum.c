@@ -27,9 +27,9 @@ char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *leng
     //conversion to string
     paillier_ciphertext_t* ciphertext = (paillier_ciphertext_t *) initid->ptr ;
 
-    int sizeOfResult = mpz_sizeinbase(ciphertext,10) + 2;
+    int sizeOfResult = mpz_sizeinbase(ciphertext->c,10) + 2;
     char* encrypted = (char*)malloc(sizeof(char)*sizeOfResult);
-    mpz_get_str(encrypted, 10, ciphertext);
+    mpz_get_str(encrypted, 10, ciphertext->c);
     memcpy(result, encrypted, sizeOfResult);
     *length = sizeOfResult;
     return result;
@@ -54,14 +54,12 @@ void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
 
     paillier_ciphertext_t* ciphertext1 = (paillier_ciphertext_t *) initid->ptr ;
     paillier_ciphertext_t* ciphertext2 = paillier_create_enc_zero() ;
-    mpz_init_set_str(ciphertext2, args->args[0], 10);
+    mpz_init_set_str(ciphertext2->c, args->args[0], 10);
 
     paillier_ciphertext_t* result = paillier_create_enc_zero();
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_HEX);
     paillier_mul(publicKey, result, ciphertext1, ciphertext2);
 
-//    paillier_freeciphertext(ciphertext1);
-//    *((paillier_ciphertext_t *) initid->ptr) = *result;
     initid->ptr = (char*) result;
 
     paillier_freeciphertext(ciphertext2);
