@@ -5,8 +5,8 @@ import subprocess
 
 config = {
 	'user': 'root',
-	# 'password': 'password1',
-	'password': 'localPass174',
+	'password': 'password1',
+	# 'password': 'localPass174',
 	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
@@ -125,39 +125,46 @@ def createAvgQuery(statementPart):
 		execute(sql_query, {})
 	except mysql.connector.Error:
 		raise
+	rows = cursor.fetchall()
+	avgRows = []
+	age = ''
 
-	rows = cursor.fetchall();
-	if not rows:
-		printAggregateResult("Avg", [])
-	else:
-		encryptedSum = rows[0]
-		# print("encryptedSum: %s" % str(encryptedSum[0])) 
-		# Calling C file
-		# print(type(encryptedSum[0]))
-		# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
-		# decryptedSum = decryptProgram.stdout.read()
-		# print("decryptedSum: %s" % decryptedSum)
-		decryptedSum = 21;
-		sql_query = "SELECT COUNT(*) FROM Employees" 
 
-		try:
-			execute(sql_query, {})
-		except mysql.connector.Error:
-			raise
+	sql_query = "SELECT COUNT(*) FROM Employees " + statementPart
 
-		countRows = cursor.fetchall()
-		count = countRows[0]
-		# print("count: %d\n" % count)
-		avgRows = []
-		for i in range(len(rows)):
-			# rows[i][0] /= float(count[0])
-			# print("decryptedSum: %d" % decryptedSum)
-			# print("count[0]: %f" % float(count[0]))
-			# print("decryptedSum/float(count[0]): %f" % (int(decryptedSum)/float(count[0])))
-			average = (int(decryptedSum)/float(count[0]))
-			avgRows.append((average,))
-		printAggregateResult("Avg", avgRows)
+	try:
+		execute(sql_query, {})
+	except mysql.connector.Error:
+		raise
 
+	countRows = cursor.fetchall()
+
+	for i in range(len(rows)):
+		encryptedSumResults = rows[i]
+		count = countRows[i][0]
+		if len(encryptedSumResults) == 2:
+			# GROUP BY age
+			encryptedSum = rows[i][1]
+			age = rows[i][0]
+		else:
+			encryptedSum = rows[i][0]
+
+		encryptedSumString = `str(encryptedSum)`
+		encryptedSumString = encryptedSumString.split("\\")[0]
+		encryptedSumString = encryptedSumString[1:]
+
+		decryptProgram = subprocess.Popen(['../encryption/decrypt',  encryptedSumString], stdout=subprocess.PIPE)
+		decryptedSum = decryptProgram.stdout.read()
+
+		average = (int(decryptedSum)/float(count))
+
+		if age:
+			titles = ["Age", "Avg"]
+			avgRows.append((str(age), str(average)))
+		else:
+			titles = ["Avg"]
+			avgRows.append((str(average),))
+	printAggregateResult(titles, avgRows)
 
 def createSelectQuery(statement):
 	statementList = statement.split(" ", 1)
