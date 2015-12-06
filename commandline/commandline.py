@@ -5,8 +5,8 @@ import subprocess
 
 config = {
 	'user': 'root',
-	# 'password': 'password1',
-	'password': 'localPass174',
+	'password': 'password1',
+	# 'password': 'localPass174',
 	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
@@ -43,8 +43,11 @@ def printQueryResults():
 		print(row_format.format(*columnList))
 		print("----------------------------------------------------------")
 		row_format = "{:<10d} {:<10d} {:100s}"
-		for attributes in rows:
-			print(row_format.format(*attributes))
+		for (id, age, encryptedSalary) in rows:
+			# print("encryptedSalary %s" % encryptedSalary)
+			decryptProgram = subprocess.Popen(['../encryption/decrypt', encryptedSalary], stdout=subprocess.PIPE)
+			decryptedSalary = decryptProgram.stdout.read()
+			print(row_format.format(id, age, decryptedSalary))
 
 def createSelectAllQuery():
 	sql_query = "SELECT * FROM Employees"
@@ -56,21 +59,62 @@ def createSelectEmployee(id):
 	execute(sql_query, {"emp_id": id})
 	printQueryResults()
 
-def printAggregateResult(title):
-	rows = cursor.fetchall()
-	if not rows:
-		print("No employees were found.\n")
+def printAggregateResult(title, result):
+	print("{:10s}".format(title))
+	print("----------------------------------------------------------")
+	row_format = "{:100f}"
+	if not result:
+		print("NULL")
 	else:
-		print("{:10s}".format(title))
-		print("----------------------------------------------------------")
-		row_format = "{:100s}"
-		for attributes in rows:
-			print(row_format.format(*attributes))
+		for attributes in result:
+			# print("result: %s" % result)
+			print(*attributes)
+			# print(row_format.format(*attributes))
+
 
 def createSumQuery(statementPart):
+	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
+	if statementPart.find("GROUP BY") != -1:
+		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
+	execute(sql_query, {})
+	rows = cursor.fetchall()
+	
+	# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
+	# decryptedSum = decryptProgram.stdout.read()
+	# for i in range(len(rows)):
+		# complete this when get sum_he working
+	printAggregateResult("Sum", rows)
+
+def createAvgQuery(statementPart):
+	# get sum, decrypt sum, get count, then return sum/count
 	sql_query = "SELECT sum_he(salary) FROM Employees " + statementPart 
 	execute(sql_query, {})
-	printAggregateResult("Sum")
+	rows = cursor.fetchall();
+	if not rows:
+		printAggregateResult("Avg", [])
+	else:
+		encryptedSum = rows[0]
+		# print("encryptedSum: %s" % str(encryptedSum[0])) 
+		# Calling C file
+		# print(type(encryptedSum[0]))
+		# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
+		# decryptedSum = decryptProgram.stdout.read()
+		# print("decryptedSum: %s" % decryptedSum)
+		decryptedSum = 21;
+		sql_query = "SELECT COUNT(*) FROM Employees" 
+		execute(sql_query, {})
+		countRows = cursor.fetchall()
+		count = countRows[0]
+		# print("count: %d\n" % count)
+		avgRows = []
+		for i in range(len(rows)):
+			# rows[i][0] /= float(count[0])
+			# print("decryptedSum: %d" % decryptedSum)
+			# print("count[0]: %f" % float(count[0]))
+			# print("decryptedSum/float(count[0]): %f" % (int(decryptedSum)/float(count[0])))
+			average = (int(decryptedSum)/float(count[0]))
+			avgRows.append((average,))
+		printAggregateResult("Avg", avgRows)
 
 
 def createSelectQuery(statement):
@@ -85,6 +129,8 @@ def createSelectQuery(statement):
 		createSelectAllQuery()
 	elif (token == "SUM"):
 		createSumQuery(remainder)
+	elif (token == "AVG"):
+		createAvgQuery(remainder)
 	else:
 		createSelectEmployee(token)
 
