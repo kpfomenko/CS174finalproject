@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
         printf("Error: No string to decode. You must pass the encrypted bytes in hexadecimal\n");
         return -1;
     }
+
     char* decryption = decrypt(argv[1]);
 
     printf("%s\n", decryption);

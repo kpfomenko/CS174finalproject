@@ -5,8 +5,8 @@ import subprocess
 
 config = {
 	'user': 'root',
-	'password': 'password1',
-	# 'password': 'localPass174',
+	# 'password': 'password1',
+	'password': 'localPass174',
 	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
@@ -68,17 +68,16 @@ def createSelectEmployee(id):
 
 	printQueryResults()
 
-def printAggregateResult(title, result):
-	print("{:10s}".format(title))
+def printAggregateResult(titles, result):
+	row_format = "{:10s}" * len(titles)
+	print(row_format.format(*titles))
 	print("----------------------------------------------------------")
-	row_format = "{:100f}"
+
 	if not result:
 		print("NULL")
 	else:
 		for attributes in result:
-			# print("result: %s" % result)
-			print(*attributes)
-			# print(row_format.format(*attributes))
+			print(row_format.format(*attributes))
 
 
 def createSumQuery(statementPart):
@@ -92,22 +91,31 @@ def createSumQuery(statementPart):
 		raise
 	
 	rows = cursor.fetchall()
-	
 	sumRows = []
+	age = ''
 	for i in range(len(rows)):
-		# complete this when get sum_he working
-		encryptedSum = rows[0]
-		print("encryptedSum[0]: %s\n" % encryptedSum[0])
-		print("type: %s\n" % type(str(encryptedSum[0])))
-		encryptedSumStr = str(encryptedSum[0])
-		print("type of str: %s\n" % type(encryptedSumStr))
+		encryptedSumResults = rows[i]
+		if len(encryptedSumResults) == 2:
+			# GROUP BY age
+			encryptedSum = rows[i][1]
+			age = rows[i][0]
+		else:
+			encryptedSum = rows[i][0]
 
-		string = subprocess.check_output([encryptedSum[0]])
+		encryptedSumString = `str(encryptedSum)`
+		encryptedSumString = encryptedSumString.split("\\")[0]
+		encryptedSumString = encryptedSumString[1:]
 
-		decryptProgram = subprocess.Popen(['../encryption/decrypt',  str(encryptedSum[0])], stdout=subprocess.PIPE)
+		decryptProgram = subprocess.Popen(['../encryption/decrypt',  encryptedSumString], stdout=subprocess.PIPE)
 		decryptedSum = decryptProgram.stdout.read()
-		sumRows.append((decryptedSum,))
-	printAggregateResult("Sum", rows)
+
+		if age:
+			titles = ["Age", "Sum"]
+			sumRows.append((str(age), decryptedSum))
+		else:
+			titles = ["Sum"]
+			sumRows.append((decryptedSum,))
+	printAggregateResult(titles, sumRows)
 
 def createAvgQuery(statementPart):
 	# get sum, decrypt sum, get count, then return sum/count
