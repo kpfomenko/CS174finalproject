@@ -5,6 +5,8 @@ LIBFLAGS = -lgmp
 libsum.so: encyptedSum.c
 	$(CC) $(mysql_config --cflags) -shared -fPIC $(CFLAGS) -o libsum.so encyptedSum.c paillier.c $(LIBFLAGS)
 
+test: test.c
+	$(CC) $(CFLAGS) -o test test.c paillier.c $(LIBFLAGS)	
 clean:
 	rm -f *.o libsum.so
 
