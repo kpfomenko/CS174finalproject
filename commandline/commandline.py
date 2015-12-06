@@ -56,25 +56,41 @@ def createSelectEmployee(id):
 	execute(sql_query, {"emp_id": id})
 	printQueryResults()
 
-
-def createSelectQuery(tokenList):
-	if (tokenList[0] == "*"):
-		createSelectAllQuery()
-	elif (tokenList[0] == "SUM"):
-			printf("This Option is not yet implemented.")
+def printAggregateResult(title):
+	rows = cursor.fetchall()
+	if not rows:
+		print("No employees were found.\n")
 	else:
-		createSelectEmployee(tokenList[0])
+		print("{:10s}".format(title))
+		print("----------------------------------------------------------")
+		row_format = "{:100s}"
+		for attributes in rows:
+			print(row_format.format(*attributes))
 
-	# for salary in cursor:
-	# 	# print(type(salary[0]))
-	# 	decryptProgram = subprocess.Popen(['../encryption/decrypt', salary[0]], stdout=subprocess.PIPE)
-	# 	decryptSalary = decryptProgram.stdout.read()
-	# 	print(decryptSalary)
+def createSumQuery(statementPart):
+	sql_query = "SELECT sum_he(salary) FROM Employees " + statementPart 
+	execute(sql_query, {})
+	printAggregateResult("Sum")
 
-	# print(tokenList)
 
-def createInsertQuery(tokenList):
+def createSelectQuery(statement):
+	statementList = statement.split(" ", 1)
+	token = statementList[0]
+	if (len(statementList) > 1):
+		remainder = statement.split(" ", 1)[1]
+	else:
+		remainder = ""
+
+	if (token == "*"):
+		createSelectAllQuery()
+	elif (token == "SUM"):
+		createSumQuery(remainder)
+	else:
+		createSelectEmployee(token)
+
+def createInsertQuery(statement):
 	# guaranteed format: employeeId, employeeAge, employeeSalary
+	tokenList = statement.split(" ")
 	emp_id = tokenList[0]
 	emp_age = tokenList[1]
 	emp_salary = tokenList[2]
@@ -92,12 +108,14 @@ if __name__ == '__main__':
 		statement = raw_input('Please enter your query: \n')
 
 		# Parsing:
-		tokenList = statement.split(" ")
-		action = tokenList[0].upper()
+		statementList = statement.split(" ", 1)
+		action = statementList[0].upper()
+		if (len(statementList) > 1):
+			remainder = statement.split(" ", 1)[1]
 		if action == 'SELECT':
-			createSelectQuery(tokenList[1:])
+			createSelectQuery(remainder)
 		elif action == 'INSERT':
-			createInsertQuery(tokenList[1:])
+			createInsertQuery(remainder)
 			cnx.commit()
 		elif action == 'EXIT':
 			break

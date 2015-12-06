@@ -7,7 +7,7 @@ my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     paillier_ciphertext_t* sum  = paillier_create_enc_zero();
     initid->ptr = (char *) sum;
 
-    if(!(args->arg_count == 1)) {
+    if(args->arg_count != 1) {
         strcpy(message, "Expected one argument for calculating sum ");
         return 1;
     }
