@@ -119,8 +119,9 @@ def createSumQuery(statementPart):
 
 def createAvgQuery(statementPart):
 	# get sum, decrypt sum, get count, then return sum/count
-	sql_query = "SELECT sum_he(salary) FROM Employees " + statementPart 
-
+	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
+	if statementPart.find("GROUP BY") != -1:
+		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
 	try:
 		execute(sql_query, {})
 	except mysql.connector.Error:
