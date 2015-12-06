@@ -6,3 +6,5 @@ CMakeLists.txt
 *.so
 libpaillier-0.8/config.log
 libpaillier-0.8/config.status
+encryption/decrypt
+encryption/encrypt
