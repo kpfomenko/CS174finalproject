@@ -28,8 +28,7 @@ def execute(query, values):
 	try:
 		cursor.execute(query, values)
 	except mysql.connector.Error as err:
-		print("ERROR\nMySQL Error: {}\n".format(err))
-		sys.exit(1)
+		raise
 	else:
 		print("Success")
 	print("----------------------------------------------------------\n")
@@ -51,12 +50,22 @@ def printQueryResults():
 
 def createSelectAllQuery():
 	sql_query = "SELECT * FROM Employees"
-	execute(sql_query, {})
+
+	try:
+		execute(sql_query, {})
+	except mysql.connector.Error:
+		raise
+
 	printQueryResults()
 
 def createSelectEmployee(id):
 	sql_query = "SELECT * FROM Employees WHERE id = %(emp_id)s"
-	execute(sql_query, {"emp_id": id})
+
+	try:
+		execute(sql_query, {"emp_id": id})
+	except mysql.connector.Error:
+		raise
+
 	printQueryResults()
 
 def printAggregateResult(title, result):
@@ -76,18 +85,39 @@ def createSumQuery(statementPart):
 	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
 	if statementPart.find("GROUP BY") != -1:
 		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
-	execute(sql_query, {})
+
+	try:
+		execute(sql_query, {})
+	except mysql.connector.Error:
+		raise
+	
 	rows = cursor.fetchall()
-	# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % encryptedSum[0]], stdout=subprocess.PIPE)
-	# decryptedSum = decryptProgram.stdout.read()
-	# for i in range(len(rows)):
+	
+	sumRows = []
+	for i in range(len(rows)):
 		# complete this when get sum_he working
+		encryptedSum = rows[0]
+		print("encryptedSum[0]: %s\n" % encryptedSum[0])
+		print("type: %s\n" % type(str(encryptedSum[0])))
+		encryptedSumStr = str(encryptedSum[0])
+		print("type of str: %s\n" % type(encryptedSumStr))
+
+		string = subprocess.check_output([encryptedSum[0]])
+
+		decryptProgram = subprocess.Popen(['../encryption/decrypt',  str(encryptedSum[0])], stdout=subprocess.PIPE)
+		decryptedSum = decryptProgram.stdout.read()
+		sumRows.append((decryptedSum,))
 	printAggregateResult("Sum", rows)
 
 def createAvgQuery(statementPart):
 	# get sum, decrypt sum, get count, then return sum/count
 	sql_query = "SELECT sum_he(salary) FROM Employees " + statementPart 
-	execute(sql_query, {})
+
+	try:
+		execute(sql_query, {})
+	except mysql.connector.Error:
+		raise
+
 	rows = cursor.fetchall();
 	if not rows:
 		printAggregateResult("Avg", [])
@@ -96,12 +126,17 @@ def createAvgQuery(statementPart):
 		# print("encryptedSum: %s" % str(encryptedSum[0])) 
 		# Calling C file
 		# print(type(encryptedSum[0]))
-		# decryptProgram = subprocess.Popen(['../encryption/decrypt', encryptedSum[0]], stdout=subprocess.PIPE)
+		# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
 		# decryptedSum = decryptProgram.stdout.read()
 		# print("decryptedSum: %s" % decryptedSum)
 		decryptedSum = 21;
 		sql_query = "SELECT COUNT(*) FROM Employees" 
-		execute(sql_query, {})
+
+		try:
+			execute(sql_query, {})
+		except mysql.connector.Error:
+			raise
+
 		countRows = cursor.fetchall()
 		count = countRows[0]
 		# print("count: %d\n" % count)
@@ -125,13 +160,25 @@ def createSelectQuery(statement):
 		remainder = ""
 
 	if (token == "*"):
-		createSelectAllQuery()
+		try:
+			createSelectAllQuery()
+		except mysql.connector.Error:
+			raise
 	elif (token == "SUM"):
-		createSumQuery(remainder)
+		try:
+			createSumQuery(remainder)
+		except mysql.connector.Error:
+			raise
 	elif (token == "AVG"):
-		createAvgQuery(remainder)
+		try:
+			createAvgQuery(remainder)
+		except mysql.connector.Error:
+			raise
 	else:
-		createSelectEmployee(token)
+		try:
+			createSelectEmployee(token)
+		except mysql.connector.Error:
+			raise
 
 def createInsertQuery(statement):
 	# guaranteed format: employeeId, employeeAge, employeeSalary
@@ -146,7 +193,11 @@ def createInsertQuery(statement):
 
 	sql_query = "INSERT INTO Employees (id, age, salary) VALUES(%(emp_id)s, %(emp_age)s, %(emp_salary)s)"
 	sql_values = {'emp_id': emp_id, 'emp_age': emp_age, 'emp_salary': encryptedSalary}	
-	execute(sql_query, sql_values)
+
+	try:
+		execute(sql_query, sql_values)
+	except mysql.connector.Error:
+		raise
 	
 if __name__ == '__main__':
 	while(True):
@@ -158,9 +209,15 @@ if __name__ == '__main__':
 		if (len(statementList) > 1):
 			remainder = statement.split(" ", 1)[1]
 		if action == 'SELECT':
-			createSelectQuery(remainder)
+			try:
+				createSelectQuery(remainder)
+			except mysql.connector.Error as err:
+				print("ERROR\nMySQL Error: {}\n".format(err))
 		elif action == 'INSERT':
-			createInsertQuery(remainder)
+			try:
+				createInsertQuery(remainder)
+			except mysql.connector.Error as err:
+				print("ERROR\nMySQL Error: {}\n".format(err))
 			cnx.commit()
 		elif action == 'EXIT':
 			break
