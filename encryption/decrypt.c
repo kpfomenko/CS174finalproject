@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 char* decrypt(char* cipherTextString) {
-    paillier_ciphertext_t* ciphertext = paillier_create_enc_zero() ;
+    paillier_ciphertext_t* ciphertext = paillier_create_enc_zero();
     mpz_init_set_str(ciphertext->c, cipherTextString, 10);
 
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
@@ -37,6 +37,7 @@ char* decrypt(char* cipherTextString) {
     // char* decryptedTextString = paillier_plaintext_to_str(decryptedText);
 
     paillier_freeciphertext(ciphertext);
+    paillier_freeplaintext(decryptedText);
     paillier_freepubkey(publicKey);
     paillier_freeprvkey(privateKey);
 

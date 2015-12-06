@@ -78,8 +78,7 @@ def createSumQuery(statementPart):
 		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
 	execute(sql_query, {})
 	rows = cursor.fetchall()
-	
-	# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
+	# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % encryptedSum[0]], stdout=subprocess.PIPE)
 	# decryptedSum = decryptProgram.stdout.read()
 	# for i in range(len(rows)):
 		# complete this when get sum_he working
@@ -97,7 +96,7 @@ def createAvgQuery(statementPart):
 		# print("encryptedSum: %s" % str(encryptedSum[0])) 
 		# Calling C file
 		# print(type(encryptedSum[0]))
-		# decryptProgram = subprocess.Popen(['../encryption/decrypt', '%s' % str(encryptedSum[0])], stdout=subprocess.PIPE)
+		# decryptProgram = subprocess.Popen(['../encryption/decrypt', encryptedSum[0]], stdout=subprocess.PIPE)
 		# decryptedSum = decryptProgram.stdout.read()
 		# print("decryptedSum: %s" % decryptedSum)
 		decryptedSum = 21;
