@@ -5,7 +5,7 @@ import subprocess
 
 config = {
 	'user': 'root',
-	'password': 'localPass174',
+	'password': 'password1',
 	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
@@ -30,36 +30,38 @@ def execute(query, values):
 		sys.exit(1)
 	else:
 		print("Success")
+	print("----------------------------------------------------------\n")
 
 def createSelectAllQuery():
 	sql_query = "SELECT * FROM Employees"
 	execute(sql_query, {})
-	if cursor.rowcount == 0:
+	rows = cursor.fetchall()
+	if not rows:
 		print("There are no employees in the database.\n")
-		return
-
-	row_format = "{:10s} {:10s} {:100s}"
-	print(row_format.format(*columnList))
-	row_format = "{:<10d} {:<10d} {:100s}"
-	for attributes in cursor:
-		print(row_format.format(*attributes))
+	else:
+		row_format = "{:10s} {:10s} {:100s}"
+		print(row_format.format(*columnList))
+		print("----------------------------------------------------------")
+		row_format = "{:<10d} {:<10d} {:100s}"
+		for attributes in rows:
+			print(row_format.format(*attributes))
 
 def createSelectQuery(tokenList):
 	if (tokenList[0] == "*"):
 		createSelectAllQuery()
+	else:
+		printf("This Option is not yet implemented.")
 		
-
-
 	# SELECT salary FROM Employees
-	sql_query = "SELECT salary FROM Employees WHERE id = 112"
-	sql_values = {}
-	execute(sql_query, sql_values)	
+	# sql_query = "SELECT salary FROM Employees WHERE id = 112"
+	# sql_values = {}
+	# execute(sql_query, sql_values)	
 
-	for salary in cursor:
-		# print(type(salary[0]))
-		decryptProgram = subprocess.Popen(['../encryption/decrypt', salary[0]], stdout=subprocess.PIPE)
-		decryptSalary = decryptProgram.stdout.read()
-		print(decryptSalary)
+	# for salary in cursor:
+	# 	# print(type(salary[0]))
+	# 	decryptProgram = subprocess.Popen(['../encryption/decrypt', salary[0]], stdout=subprocess.PIPE)
+	# 	decryptSalary = decryptProgram.stdout.read()
+	# 	print(decryptSalary)
 
 	# print(tokenList)
 
@@ -90,10 +92,9 @@ if __name__ == '__main__':
 		createSelectQuery(tokenList[1:])
 	elif action == 'INSERT':
 		createInsertQuery(tokenList[1:])
+		cnx.commit()
 	else:
 		print ('Error: invalid action -- %s' % tokenList[0])
-
-	cnx.commit()
 
 	cursor.close()
 	cnx.close()
