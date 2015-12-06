@@ -15,12 +15,16 @@ int main(int argc, char* argv[]) {
         printf("Error: No string to decode. You must pass the encrypted bytes in hexadecimal\n");
     }
     char* decryption = decrypt(argv[1]);
+
+//    int number = (int)strtol(decryption, NULL, 10);
+//    printf("number = %d\n", number);
+
     printf("%s\n", decryption);
     return 0;
 }
 char* decrypt(char* cipherTextString) {
     paillier_ciphertext_t* ciphertext = paillier_create_enc_zero() ;
-    mpz_init_set_str(ciphertext, cipherTextString, 16);
+    mpz_init_set_str(ciphertext, cipherTextString, 10);
 
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
     paillier_prvkey_t* privateKey = paillier_prvkey_from_hex(PRIVATE_KEY_BYTES, publicKey);

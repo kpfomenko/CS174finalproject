@@ -5,7 +5,7 @@ import subprocess
 
 config = {
 	'user': 'root',
-	'password': 'password1', 
+	'password': 'localPass174',
 	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',

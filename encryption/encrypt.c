@@ -26,9 +26,9 @@ char * encrypt(char *plaintextString) {
 
     ciphertext = paillier_enc(ciphertext, publicKey, plainText, &paillier_get_rand_devurandom);
     
-    int sizeOfResult = mpz_sizeinbase(ciphertext,16);
+    int sizeOfResult = mpz_sizeinbase(ciphertext, 10);
     char* encrypted = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
-    mpz_get_str(encrypted, 16, ciphertext);
+    mpz_get_str(encrypted, 10, ciphertext);
 
     paillier_freeplaintext(plainText);
     paillier_freeciphertext(ciphertext);

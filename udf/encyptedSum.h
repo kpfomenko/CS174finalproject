@@ -17,10 +17,4 @@ char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *leng
 void sum_he_clear(UDF_INIT *initid, char *is_null, char *error);
 void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
-// Returns a pointer to a new unsigned char array that must be freed.
-unsigned char *convertHexToBytes(char *hex);
-
-// Returns a pointer to a new char array containing the hexidecimal value of the bytes. Must free this array.
-char* convertBytesToHex(unsigned char* bytes);
-
 #endif //CS174FINALPROJECT_ENCYPTEDSUM_H
