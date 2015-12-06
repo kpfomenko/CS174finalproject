@@ -18,6 +18,8 @@ except mysql.connector.Error as err:
 	print("Connection Error: {}".format(err))
 	sys.exit(1)
 
+columnList = ["emp_id", "emp_age", "emp_salary"]
+
 def execute(query, values):
 	your_query = query % values
 	print("Executing: {} ... ".format(query % values), end="")
@@ -29,8 +31,25 @@ def execute(query, values):
 	else:
 		print("Success")
 
-# Functions:
+def createSelectAllQuery():
+	sql_query = "SELECT * FROM Employees"
+	execute(sql_query, {})
+	if cursor.rowcount == 0:
+		print("There are no employees in the database.\n")
+		return
+
+	row_format = "{:10s} {:10s} {:100s}"
+	print(row_format.format(*columnList))
+	row_format = "{:<10d} {:<10d} {:100s}"
+	for attributes in cursor:
+		print(row_format.format(*attributes))
+
 def createSelectQuery(tokenList):
+	if (tokenList[0] == "*"):
+		createSelectAllQuery()
+		
+
+
 	# SELECT salary FROM Employees
 	sql_query = "SELECT salary FROM Employees WHERE id = 112"
 	sql_values = {}
