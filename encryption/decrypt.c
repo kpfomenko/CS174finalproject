@@ -28,6 +28,12 @@ char* decrypt(char* cipherTextString) {
 
     paillier_plaintext_t* decryptedText = NULL;
     decryptedText = paillier_dec(decryptedText, publicKey, privateKey, ciphertext);
+
+//    int sizeOfResult = mpz_sizeinbase(decryptedText->m, 10);
+//    char* decryptedTextString = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
+//    mpz_get_str(decryptedTextString, 10, decryptedText->m);
+//    printf("decrypted: %s\n", decryptedTextString);
+
     char* decryptedTextString = paillier_plaintext_to_str(decryptedText);
 
     paillier_freeciphertext(ciphertext);

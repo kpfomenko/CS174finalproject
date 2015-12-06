@@ -23,4 +23,4 @@ createKeys: createKeys.o
 	$(CC) -o createKeys createKeys.o $(CFLAGS) -L/usr/local/lib -lpaillier -lgmp
 
 clean:
-	rm *.o encrypt decrypt createKeys
+	rm -f *.o encrypt decrypt createKeys
