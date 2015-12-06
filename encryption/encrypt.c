@@ -21,14 +21,15 @@ int main(int argc, char* argv[]) {
 
 char * encrypt(char *plaintextString) {
     paillier_pubkey_t* publicKey = paillier_pubkey_from_hex(PUBLIC_KEY_BYTES);
-    paillier_plaintext_t* plainText = paillier_plaintext_from_str(plaintextString);
+    paillier_plaintext_t* plainText = paillier_plaintext_from_ui(atoi(plaintextString));
+    // paillier_plaintext_t* plainText = paillier_plaintext_from_str(plaintextString);
     paillier_ciphertext_t* ciphertext = paillier_create_enc_zero();
 
     ciphertext = paillier_enc(ciphertext, publicKey, plainText, &paillier_get_rand_devurandom);
     
-    int sizeOfResult = mpz_sizeinbase(ciphertext->c, 10);
-    char* encrypted = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
-    mpz_get_str(encrypted, 10, ciphertext->c);
+    // int sizeOfResult = mpz_sizeinbase(ciphertext->c, 10);
+    // char* encrypted = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
+    char* encrypted = mpz_get_str(NULL, 10, ciphertext->c);
 
     paillier_freeplaintext(plainText);
     paillier_freeciphertext(ciphertext);

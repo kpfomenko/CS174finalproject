@@ -33,8 +33,8 @@ char* decrypt(char* cipherTextString) {
 //    char* decryptedTextString = (char*)malloc(sizeof(char)*(sizeOfResult + 2));
 //    mpz_get_str(decryptedTextString, 10, decryptedText->m);
 //    printf("decrypted: %s\n", decryptedTextString);
-
-    char* decryptedTextString = paillier_plaintext_to_str(decryptedText);
+    char* decryptedTextString = mpz_get_str(NULL, 10, decryptedText->m);
+    // char* decryptedTextString = paillier_plaintext_to_str(decryptedText);
 
     paillier_freeciphertext(ciphertext);
     paillier_freepubkey(publicKey);

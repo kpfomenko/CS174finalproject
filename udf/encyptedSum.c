@@ -28,8 +28,9 @@ char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *leng
     paillier_ciphertext_t* ciphertext = (paillier_ciphertext_t *) initid->ptr ;
 
     int sizeOfResult = mpz_sizeinbase(ciphertext->c,10) + 2;
-    char* encrypted = (char*)malloc(sizeof(char)*sizeOfResult);
-    mpz_get_str(encrypted, 10, ciphertext->c);
+    // char* encrypted = (char*)malloc(sizeof(char)*sizeOfResult);
+    // mpz_get_str(encrypted, 10, ciphertext->c);
+    char* encrypted = mpz_get_str(NULL, 10, ciphertext->c);
     memcpy(result, encrypted, sizeOfResult);
     *length = sizeOfResult;
     return result;
