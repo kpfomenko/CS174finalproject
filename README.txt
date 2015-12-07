@@ -15,7 +15,6 @@ How to Set Up Database on AWS:
 	a. Go into database directory
 	b. Run following commands:
 		>> mysql -u root -p
-		[ enter password: cs174$ ]
 		>> source create.sql
 		>> use project;
 		>> GRANT ALL ON project.* TO root@'%' IDENTIFIED BY 'cs174$'
