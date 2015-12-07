@@ -55,4 +55,6 @@ by Kateryna Fomenko and Deanna Hartsook
 	[At this point you can begin entering queries in the form specified in the final_project.pdf ]
 	1. To exit the client run the following command:
 		
-	`>> exit`
+	```
+	>> exit
+	```
