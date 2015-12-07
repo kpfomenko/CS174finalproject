@@ -254,6 +254,7 @@ if __name__ == '__main__':
 				print("ERROR\nMySQL Error: {}\n".format(err))
 			cnx.commit()
 		elif action == 'EXIT':
+			print("Bye!")
 			break
 		else:
 			print ('Error: invalid query -- %s' % statement)
