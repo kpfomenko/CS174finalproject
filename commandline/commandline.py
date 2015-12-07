@@ -5,9 +5,10 @@ import subprocess
 
 config = {
 	'user': 'root',
-	'password': 'cs174$',
-	# 'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
-	'host': '54.67.69.244',
+	# 'password': 'cs174$',
+	'password': 'password1',
+	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
+	# 'host': '54.67.69.244',
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
 }
@@ -88,10 +89,25 @@ def createSumQuery(statementPart):
 		raise
 	
 	row = cursor.fetchone()
-
+	# print(row)
 	if row:
-		sumRows = []
+		# condition is true for all simple SUM statements
+		encryptedRowString = `str(row[0])`
+		encryptedRowString = encryptedRowString.split("\\")[0]
+		encryptedRowString = encryptedRowString[1:]
+		# print("encryptedRowString: %s\n" % encryptedRowString)
+		if encryptedRowString == '1' :
+			# dealing with empty
+			# print("Empty Table")
+			printAggregateResult(titles, sumRows)
+			return			
+		else:
+			#normal
+			# print("Has Rows")
+			sumRows = []
 	else:
+		# Group BY
+		# print("GROUP BY")
 		printAggregateResult(titles, sumRows)
 		return
 
