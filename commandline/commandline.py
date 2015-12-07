@@ -94,19 +94,15 @@ def createSumQuery(statementPart):
 		encryptedRowString = `str(row[0])`
 		encryptedRowString = encryptedRowString.split("\\")[0]
 		encryptedRowString = encryptedRowString[1:]
-		# print("encryptedRowString: %s\n" % encryptedRowString)
 		if encryptedRowString == '1' :
 			# dealing with empty
-			# print("Empty Table")
 			printAggregateResult(titles, sumRows)
 			return			
 		else:
 			#normal
-			# print("Has Rows")
 			sumRows = []
 	else:
 		# Group BY
-		# print("GROUP BY")
 		printAggregateResult(titles, sumRows)
 		return
 
@@ -117,7 +113,7 @@ def createSumQuery(statementPart):
 		if len(encryptedSumResults) == 2:
 			# GROUP BY age
 			encryptedSum = row[1]
-			age = rows[i][0]
+			age = row[0]
 		else:
 			encryptedSum = row[0]
 
