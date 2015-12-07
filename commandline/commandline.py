@@ -5,10 +5,9 @@ import subprocess
 
 config = {
 	'user': 'root',
-	# 'password': 'cs174$',
-	'password': 'password1',
-	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
-	# 'host': '54.67.69.244',
+	'password': 'cs174$',
+	# 'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
+	'host': '54.67.69.244',
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
 }
@@ -37,11 +36,11 @@ def printQueryResults():
 		row_format = "{:10s} {:10s} {:100s}"
 		print(row_format.format(*columnList))
 		print("----------------------------------------------------------")
-		row_format = "{:<10d} {:<10d} {:100s}"
+		# row_format = "{:<10d} {:<10d} {:100s}"
 		for (id, age, encryptedSalary) in rows:
 			decryptProgram = subprocess.Popen(['../encryption/decrypt', encryptedSalary], stdout=subprocess.PIPE)
 			decryptedSalary = decryptProgram.stdout.read()
-			print(row_format.format(id, age, decryptedSalary))
+			print(row_format.format(str(id), str(age), str(decryptedSalary)))
 
 def createSelectAllQuery():
 	sql_query = "SELECT * FROM Employees"
