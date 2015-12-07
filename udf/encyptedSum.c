@@ -1,7 +1,7 @@
 #include <string.h>
 #include "encyptedSum.h"
 #include "gmp.h"
-#include "../libpaillier-0.8/paillier.h"
+#include "paillier.h"
 
 // Initializes the initid->ptr to point to a newly allocated ciphertext.
 my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
