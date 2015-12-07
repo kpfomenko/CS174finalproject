@@ -19,7 +19,6 @@ by Kateryna Fomenko and Deanna Hartsook
 
 	 ```
 	>> mysql -u root -p
-	[ enter password: cs174$ ]
 	>> source create.sql
 	>> use project;
 	>> GRANT ALL ON project.* TO root@'%' IDENTIFIED BY 'cs174$'
