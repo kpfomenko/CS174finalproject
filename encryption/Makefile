@@ -10,9 +10,6 @@ OBJ = encrypt.o decrypt.o createKeys.o
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-# encryption: main.o
-# 	$(CC) -o encryption main.o $(CFLAGS) -L/usr/local/lib -lpaillier -lgmp
-
 encrypt: encrypt.o
 	$(CC) -o encrypt encrypt.o $(CFLAGS) -L/usr/local/lib -lpaillier -lgmp
 
