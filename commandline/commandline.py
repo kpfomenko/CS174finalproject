@@ -6,8 +6,6 @@ import subprocess
 config = {
 	'user': 'root',
 	'password': 'cs174$',
-	# 'password': 'password1',
-	# 'password': 'localPass174',
 	# 'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
 	'host': '54.67.69.244',
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
@@ -25,15 +23,10 @@ columnList = ["emp_id", "emp_age", "emp_salary"]
 
 def execute(query, values):
 	your_query = query % values
-	# print("\n")
-	# print("Executing: {} ... ".format(query % values), end="")
 	try:
 		cursor.execute(query, values)
 	except mysql.connector.Error as err:
 		raise
-	# else:
-	# 	print("Success")
-	# print("----------------------------------------------------------\n")
 
 def printQueryResults():
 	rows = cursor.fetchall()
@@ -45,7 +38,6 @@ def printQueryResults():
 		print("----------------------------------------------------------")
 		row_format = "{:<10d} {:<10d} {:100s}"
 		for (id, age, encryptedSalary) in rows:
-			# print("encryptedSalary %s" % encryptedSalary)
 			decryptProgram = subprocess.Popen(['../encryption/decrypt', encryptedSalary], stdout=subprocess.PIPE)
 			decryptedSalary = decryptProgram.stdout.read()
 			print(row_format.format(id, age, decryptedSalary))
@@ -75,11 +67,6 @@ def printAggregateResult(titles, result):
 	row_format = "{:10s}" * len(titles)
 	print(row_format.format(*titles))
 	print("----------------------------------------------------------")
-
-	# if not result:
-	# 	if not ti
-	# 	print(row_format.format( "NULL"))
-	# else:
 	for attributes in result:
 		print(row_format.format(*attributes))
 	print("\n")
