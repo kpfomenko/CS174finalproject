@@ -5,9 +5,11 @@ import subprocess
 
 config = {
 	'user': 'root',
-	'password': 'password1',
+	'password': 'cs174$',
+	# 'password': 'password1',
 	# 'password': 'localPass174',
-	'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
+	# 'host': '127.0.0.1', # Localhost. If your MySQL Server is running on your own computer.
+	'host': '54.67.69.244',
 	'port': '3306', # Default port on Windows/Linux is 3306. On Mac it may be 3307.
 	'database': 'project',
 }
@@ -84,7 +86,7 @@ def printAggregateResult(titles, result):
 
 
 def createSumQuery(statementPart):
-	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
+	sql_query = "SELECT SUM_HE(salary) FROM Employees " + statementPart
 	if statementPart.find("GROUP BY") != -1:
 		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart
 		titles = ["Age", "Sum"]
@@ -117,6 +119,7 @@ def createSumQuery(statementPart):
 
 		decryptProgram = subprocess.Popen(['../encryption/decrypt',  encryptedSumString], stdout=subprocess.PIPE)
 		decryptedSum = decryptProgram.stdout.read()
+
 		if age:
 			sumRows.append((str(age), decryptedSum))
 		else:
@@ -125,9 +128,9 @@ def createSumQuery(statementPart):
 
 def createAvgQuery(statementPart):
 	# get sum, decrypt sum, get count, then return sum/count
-	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
+	sql_query = "SELECT SUM_HE(salary) fROM Employees " + statementPart
 	if statementPart.find("GROUP BY") != -1:
-		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart
+		sql_query = "SELECT age, SUM_HE(salary) FROM Employees " + statementPart
 		titles = ["Age", "Avg"]
 		avgRows = [["NULL", "NULL"]]
 	else:

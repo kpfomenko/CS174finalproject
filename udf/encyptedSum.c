@@ -1,10 +1,10 @@
 #include <string.h>
 #include "encyptedSum.h"
 #include "gmp.h"
-#include "../libpaillier-0.8/paillier.h"
+#include "paillier.h"
 
 // Initializes the initid->ptr to point to a newly allocated ciphertext.
-my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+my_bool SUM_HE_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     paillier_ciphertext_t* sum  = paillier_create_enc_zero();
     initid->ptr = (char *) sum;
 
@@ -22,12 +22,12 @@ my_bool sum_he_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 }
 
 //Frees the initid->ptr ciphertext 
-void sum_he_deinit(UDF_INIT *initid) {
+void SUM_HE_deinit(UDF_INIT *initid) {
     paillier_freeciphertext((paillier_ciphertext_t *) initid->ptr);
 }
 
 //Gets the encrypted sum from the initid->ptr and copies it into the result variable and sets the *length variable.
-char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error) {
+char *SUM_HE(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error) {
     paillier_ciphertext_t* ciphertext = (paillier_ciphertext_t *) initid->ptr ;
     int sizeOfResult = mpz_sizeinbase(ciphertext->c,10) + 2;
     char* encrypted = mpz_get_str(NULL, 10, ciphertext->c);
@@ -37,7 +37,7 @@ char *sum_he(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *leng
 
 }
 // Clears the memory pointed to by the initid->ptr, and reinitializes it to an empty ciphertext.
-void sum_he_clear(UDF_INIT *initid, char *is_null, char *error) {
+void SUM_HE_clear(UDF_INIT *initid, char *is_null, char *error) {
     paillier_freeciphertext((paillier_ciphertext_t *) initid->ptr);
     *((paillier_ciphertext_t *) initid->ptr) = * paillier_create_enc_zero();
 }
@@ -45,14 +45,14 @@ void sum_he_clear(UDF_INIT *initid, char *is_null, char *error) {
 // Performs the main addition of the SUM_HE function where it takes two ciphertexts,
 // multiples them using the paillier_mult() function, and then returns then sets the
 // initid->ptr to point to this new sum.
-void sum_he_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+void SUM_HE_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
 
     if(!(args->arg_count == 1)) {
         strcpy(error, "Expected one argument for calculating sum ");
         return;
     }
     if(	args->arg_type[0] != STRING_RESULT){
-        strcpy(error, "sum_he requires an string containing the hexidecimal encrypted value");
+        strcpy(error, "SUM_HE requires an string containing the hexidecimal encrypted value");
         return;
     }
 
