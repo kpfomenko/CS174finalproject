@@ -1,6 +1,17 @@
 ## CS174A Databases Final Project
 by Kateryna Fomenko and Deanna Hartsook
 
+###Installing GMP
+
+1. Download gmp from gmplib.org and install it using the following commands
+	
+	```
+	./configure 
+	make 
+	make check
+	sudo make install
+	```
+
 ### How to Set Up Database on AWS:
 
 1. Compile SUM_HE shared library
