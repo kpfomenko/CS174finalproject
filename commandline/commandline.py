@@ -87,24 +87,24 @@ def createSumQuery(statementPart):
 	except mysql.connector.Error:
 		raise
 	
-	rows = cursor.fetchall()
-	age = ''
+	row = cursor.fetchone()
 
-	if cursor.fetchone():
-		# there are results
+	if row:
 		sumRows = []
 	else:
 		printAggregateResult(titles, sumRows)
 		return
 
-	for i in range(len(rows)):
-		encryptedSumResults = rows[i]
+	age = ''
+
+	while row:
+		encryptedSumResults = row
 		if len(encryptedSumResults) == 2:
 			# GROUP BY age
-			encryptedSum = rows[i][1]
+			encryptedSum = row[1]
 			age = rows[i][0]
 		else:
-			encryptedSum = rows[i][0]
+			encryptedSum = row[0]
 
 		encryptedSumString = `str(encryptedSum)`
 		encryptedSumString = encryptedSumString.split("\\")[0]
@@ -117,6 +117,9 @@ def createSumQuery(statementPart):
 			sumRows.append((str(age), decryptedSum))
 		else:
 			sumRows.append((decryptedSum,))
+
+		row = cursor.fetchone()
+
 	printAggregateResult(titles, sumRows)
 
 def createAvgQuery(statementPart):
