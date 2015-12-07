@@ -102,8 +102,14 @@ def createSumQuery(statementPart):
 	
 	rows = cursor.fetchall()
 	age = ''
-	if len(rows) > 0:
-		sumRows = []		
+
+	if cursor.fetchone():
+		# there are results
+		sumRows = []
+	else:
+		printAggregateResult(titles, sumRows)
+		return
+
 	for i in range(len(rows)):
 		encryptedSumResults = rows[i]
 		if len(encryptedSumResults) == 2:
@@ -152,12 +158,12 @@ def createAvgQuery(statementPart):
 		raise
 
 	countRows = cursor.fetchall()
-
-	count = countRows[0][0]
-	if count == 0:
+	# print(countRows)
+	if not countRows or countRows[0][0] == 0:
 		printAggregateResult(titles, avgRows)
 		return
 	else:
+		count = countRows[0][0]
 		avgRows = []
 
 	for i in range(len(rows)):
