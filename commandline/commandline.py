@@ -23,15 +23,15 @@ columnList = ["emp_id", "emp_age", "emp_salary"]
 
 def execute(query, values):
 	your_query = query % values
-	print("\n")
-	print("Executing: {} ... ".format(query % values), end="")
+	# print("\n")
+	# print("Executing: {} ... ".format(query % values), end="")
 	try:
 		cursor.execute(query, values)
 	except mysql.connector.Error as err:
 		raise
-	else:
-		print("Success")
-	print("----------------------------------------------------------\n")
+	# else:
+	# 	print("Success")
+	# print("----------------------------------------------------------\n")
 
 def printQueryResults():
 	rows = cursor.fetchall()
@@ -69,21 +69,29 @@ def createSelectEmployee(id):
 	printQueryResults()
 
 def printAggregateResult(titles, result):
+	print("\n")
 	row_format = "{:10s}" * len(titles)
 	print(row_format.format(*titles))
 	print("----------------------------------------------------------")
 
-	if not result:
-		print("NULL")
-	else:
-		for attributes in result:
-			print(row_format.format(*attributes))
+	# if not result:
+	# 	if not ti
+	# 	print(row_format.format( "NULL"))
+	# else:
+	for attributes in result:
+		print(row_format.format(*attributes))
+	print("\n")
 
 
 def createSumQuery(statementPart):
 	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
 	if statementPart.find("GROUP BY") != -1:
-		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
+		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart
+		titles = ["Age", "Sum"]
+		sumRows = [["NULL", "NULL"]]
+	else:
+		titles = ["Sum"]
+		sumRows = [["NULL"]]
 
 	try:
 		execute(sql_query, {})
@@ -91,8 +99,9 @@ def createSumQuery(statementPart):
 		raise
 	
 	rows = cursor.fetchall()
-	sumRows = []
 	age = ''
+	if len(rows) > 0:
+		sumRows = []		
 	for i in range(len(rows)):
 		encryptedSumResults = rows[i]
 		if len(encryptedSumResults) == 2:
@@ -108,12 +117,9 @@ def createSumQuery(statementPart):
 
 		decryptProgram = subprocess.Popen(['../encryption/decrypt',  encryptedSumString], stdout=subprocess.PIPE)
 		decryptedSum = decryptProgram.stdout.read()
-
 		if age:
-			titles = ["Age", "Sum"]
 			sumRows.append((str(age), decryptedSum))
 		else:
-			titles = ["Sum"]
 			sumRows.append((decryptedSum,))
 	printAggregateResult(titles, sumRows)
 
@@ -121,15 +127,19 @@ def createAvgQuery(statementPart):
 	# get sum, decrypt sum, get count, then return sum/count
 	sql_query = "SELECT sum_he(salary) fROM Employees " + statementPart 
 	if statementPart.find("GROUP BY") != -1:
-		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart 
+		sql_query = "SELECT age, sum_he(salary) FROM Employees " + statementPart
+		titles = ["Age", "Avg"]
+		avgRows = [["NULL", "NULL"]]
+	else:
+		titles = ["Avg"]
+		avgRows = [["NULL"]]
+
 	try:
 		execute(sql_query, {})
 	except mysql.connector.Error:
 		raise
 	rows = cursor.fetchall()
-	avgRows = []
 	age = ''
-
 
 	sql_query = "SELECT COUNT(*) FROM Employees " + statementPart
 
@@ -139,6 +149,13 @@ def createAvgQuery(statementPart):
 		raise
 
 	countRows = cursor.fetchall()
+
+	count = countRows[0][0]
+	if count == 0:
+		printAggregateResult(titles, avgRows)
+		return
+	else:
+		avgRows = []
 
 	for i in range(len(rows)):
 		encryptedSumResults = rows[i]
@@ -160,10 +177,8 @@ def createAvgQuery(statementPart):
 		average = (int(decryptedSum)/float(count))
 
 		if age:
-			titles = ["Age", "Avg"]
 			avgRows.append((str(age), str(average)))
 		else:
-			titles = ["Avg"]
 			avgRows.append((str(average),))
 	printAggregateResult(titles, avgRows)
 
